@@ -8,8 +8,7 @@ const tags = ["div", "p", "a", "h1", "h2", "h3", "h4", "h5", "h6", "img"];
 
 const tag = (name, ...children) => {
     const element = document.createElement(name);
-
-    children.forEach(child => element.appendChild(child));
+    children.forEach(child => element.append(child));
 
     element.att = function (attributes) {
         Object.keys(attributes).forEach(key => this.setAttribute(key, attributes[key]));
@@ -20,17 +19,13 @@ const tag = (name, ...children) => {
     return element;
 };
 
-const text = (value) => {
-    return document.createTextNode(value);
-};
-
 const page = () =>
     div(
 
         div(
-            h1(text("Dachshund")),
-            p(text(P1)),
-            p(text(P2))
+            h1("Dachshund"),
+            p(P1),
+            p(P2)
         ),
 
         div(
@@ -50,8 +45,8 @@ const page = () =>
                     }
                 ),
 
-            p(text("Fig.1: un chorizo")),
-            p(text(P3))
+            p("Fig.1: un chorizo"),
+            p(P3)
 
         )
     )
@@ -60,13 +55,7 @@ const page = () =>
         })
 
 
-const initFunctions = () => {
-    tags.forEach(tagName => {
-        window[tagName] = (...children) => {
-            return tag(tagName, ...children);
-        }
-    })
-}
+const initFunctions = () => tags.forEach(tagName => window[tagName] = (...children) => tag(tagName, ...children))
 
 window.onload = () => {
     initFunctions();
