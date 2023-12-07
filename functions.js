@@ -17,9 +17,14 @@ const tag = (name, ...children) => {
   children.forEach((child) => element.append(child));
 
   element.att = function (attributes) {
-    Object.keys(attributes).forEach((key) =>
-      this.setAttribute(key, attributes[key])
-    );
+    Object.keys(attributes).forEach((key) => {
+      let value = attributes[key];
+      let isHref = key === "href";
+
+      if (isHref && value.startsWith("/")) value = "#" + value;
+
+      this.setAttribute(key, value);
+    });
 
     return this;
   };
@@ -32,7 +37,8 @@ const router = (routes, fallback = () => h3("Page not found")) => {
 
   const onRouteUpdate = () => {
     let location = window.location.hash.split("#")[1] || "/";
-    page.replaceChildren((routes[location] ? routes[location] : fallback)());
+    let component = routes[location] ? routes[location] : fallback;
+    page.replaceChildren(component());
 
     return page;
   };

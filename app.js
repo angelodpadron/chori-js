@@ -16,14 +16,11 @@ const MICHI_P1 =
 
 const choriPage = () =>
   div(
-    navbar(),
     div(
-      div(
-        h1("Dachshund"), 
-        p(CHORI_P1), 
-        p(CHORI_P2),
-        p(CHORI_P3)
-      ),
+      div(h1("Dachshund"), 
+      p(CHORI_P1), 
+      p(CHORI_P2), 
+      p(CHORI_P3)),
 
       div(
         a(
@@ -37,7 +34,7 @@ const choriPage = () =>
         }),
 
         p("Fig.1: un chorizo"),
-        p(CHORI_P4),
+        p(CHORI_P4)
       )
     ).att({
       class: "container text-center",
@@ -46,7 +43,6 @@ const choriPage = () =>
 
 const michiPage = () =>
   div(
-    navbar(),
     div(
       div(h1("Michi"), p(MICHI_P1)),
       div(
@@ -69,7 +65,6 @@ const michiPage = () =>
 
 const landingPage = () =>
   div(
-    navbar(),
     div(h1("( ﾉ ﾟｰﾟ)ﾉ landing page ＼(ﾟｰﾟ＼)")).att({
       class: "container text-center",
     })
@@ -78,15 +73,15 @@ const landingPage = () =>
 const navbar = () =>
   div(
     a("Home").att({
-      href: "#",
+      href: "/",
       class: "p-2",
     }),
     a("Chori").att({
-      href: "#/chori",
+      href: "/chori",
       class: "p-2",
     }),
     a("Michi").att({
-      href: "#/michi",
+      href: "/michi",
       class: "p-2",
     })
   ).att({});
@@ -102,11 +97,14 @@ const notFoundPage = () =>
   });
 
 const render = () =>
-  router(
-    {
-      "/": landingPage,
-      "/chori": choriPage,
-      "/michi": michiPage,
-    },
-    notFoundPage
+  div(
+    navbar(),
+    router(
+      {
+        "/": landingPage,
+        "/chori": choriPage,
+        "/michi": michiPage,
+      },
+      notFoundPage
+    )
   );
