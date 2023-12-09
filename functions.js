@@ -1,4 +1,4 @@
-const _tags = [
+const TAGS = [
   "div",
   "p",
   "a",
@@ -12,7 +12,7 @@ const _tags = [
   "button",
 ];
 
-const tag = (name, ...children) => {
+export const tag = (name, ...children) => {
   const element = document.createElement(name);
   children.forEach((child) => element.append(child));
 
@@ -32,13 +32,35 @@ const tag = (name, ...children) => {
   return element;
 };
 
-const router = (routes, fallback = () => h3("Page not found")) => {
+export const router = (routes, fallback = () => h3("Page not found")) => {
   const page = div();
 
   const onRouteUpdate = () => {
-    let location = window.location.hash.split("#")[1] || "/";
-    let component = routes[location] ? routes[location] : fallback;
-    page.replaceChildren(component());
+    const location = window.location.hash.split("#")[1] || "/";
+    const pathResult = location
+      .split("/")
+      .filter((value) => value)
+      .map((value) => "/" + value)
+      .reduce((acc, key) => acc && acc[key], routes);
+
+    let finalComponent;
+
+    if (typeof pathResult === "object") {
+      let defaultComponent = pathResult["/"];
+
+      if (defaultComponent && typeof defaultComponent === "function") {
+        finalComponent = defaultComponent;
+      } else {
+        console.error(`No default component has been defined for this route: ${location}`);
+        finalComponent = fallback;
+      }
+    }
+
+    if (typeof pathResult === "function") finalComponent = pathResult;
+
+    if (!pathResult) finalComponent = fallback;
+
+    page.replaceChildren(finalComponent());
 
     return page;
   };
@@ -50,16 +72,13 @@ const router = (routes, fallback = () => h3("Page not found")) => {
   return page;
 };
 
-const init = () =>
-  _tags.forEach(
-    (tagName) => (window[tagName] = (...children) => tag(tagName, ...children))
-  );
+export const tags = () => {
+  return TAGS.reduce((acc, tagName) => {
+    acc[tagName] = (...children) => tag(tagName, ...children);
+    return acc;
+  }, {});
+};
 
-window.onload = () => {
-  init();
-  if (typeof render !== "function")
-    throw new Error(
-      `No "render" function was defined. Define function called "render" that returns a set of elements to render.`
-    );
-  root.appendChild(render());
+export const render = (component) => {
+  root.appendChild(component());
 };
